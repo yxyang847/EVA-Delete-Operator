@@ -27,7 +27,7 @@ from src.optimizer.operators import (
     LogicalCreate, LogicalInsert, LogicalLoadData, LogicalUpload,
     LogicalCreateUDF, LogicalProject, LogicalGet, LogicalFilter,
     LogicalUnion, LogicalOrderBy, LogicalLimit, LogicalQueryDerivedGet,
-    LogicalSample)
+    LogicalSample, LogicalDelete)
 from src.planner.create_plan import CreatePlan
 from src.planner.create_udf_plan import CreateUDFPlan
 from src.planner.insert_plan import InsertPlan
@@ -39,6 +39,7 @@ from src.planner.union_plan import UnionPlan
 from src.planner.orderby_plan import OrderByPlan
 from src.planner.limit_plan import LimitPlan
 from src.planner.sample_plan import SamplePlan
+from src.planner.delete_plan import DeletePlan
 from src.configuration.configuration_manager import ConfigurationManager
 
 
@@ -66,6 +67,7 @@ class RuleType(Flag):
     LOGICAL_INSERT_TO_PHYSICAL = auto()
     LOGICAL_LOAD_TO_PHYSICAL = auto()
     LOGICAL_UPLOAD_TO_PHYSICAL = auto()
+    LOGICAL_DELETE_TO_PHYSICAL = auto()
     LOGICAL_CREATE_TO_PHYSICAL = auto()
     LOGICAL_CREATE_UDF_TO_PHYSICAL = auto()
     LOGICAL_GET_TO_SEQSCAN = auto()
@@ -87,6 +89,7 @@ class Promise(IntEnum):
     LOGICAL_INSERT_TO_PHYSICAL = auto()
     LOGICAL_LOAD_TO_PHYSICAL = auto()
     LOGICAL_UPLOAD_TO_PHYSICAL = auto()
+    LOGICAL_DELETE_TO_PHYSICAL = auto()
     LOGICAL_CREATE_TO_PHYSICAL = auto()
     LOGICAL_CREATE_UDF_TO_PHYSICAL = auto()
     LOGICAL_SAMPLE_TO_UNIFORMSAMPLE = auto()
@@ -433,6 +436,20 @@ class LogicalUploadToPhysical(Rule):
         after = UploadPlan(before.path, before.video_blob)
         return after
 
+class LogicalDeleteToPhysical(Rule):
+    def __init__(self):
+        pattern = Pattern(OperatorType.LOGICALDELETE)
+        super().__init__(RuleType.LOGICAL_DELETE_TO_PHYSICAL, pattern)
+
+    def promise(self):
+        return Promise.LOGICAL_DELETE_TO_PHYSICAL
+
+    def check(self, before: Operator, context: OptimizerContext):
+        return True
+
+    def apply(self, before: LogicalDELETE, context: OptimizerContext):
+        after = DeletePlan(before.video_catalog_id)
+        return after
 
 class LogicalGetToSeqScan(Rule):
     def __init__(self):
@@ -580,6 +597,7 @@ class RulesManager:
             LogicalInsertToPhysical(),
             LogicalLoadToPhysical(),
             LogicalUploadToPhysical(),
+            LogicalDeleteToPhysical(),
             LogicalSampleToUniformSample(),
             LogicalGetToSeqScan(),
             LogicalDerivedGetToPhysical(),

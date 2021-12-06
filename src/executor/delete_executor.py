@@ -15,15 +15,18 @@
 import os
 import base64
 
-from src.planner.upload_plan import UploadPlan
+from src.catalog.catalog_manager import CatalogManager
+from src.planner.delete_plan import DeletePlan
 from src.executor.abstract_executor import AbstractExecutor
 
+from src.storage.storage_engine import StorageEngine
+from src.models.storage.batch import Batch
 from src.configuration.configuration_manager import ConfigurationManager
 
 
-class UploadExecutor(AbstractExecutor):
+class DeleteExecutor(AbstractExecutor):
 
-    def __init__(self, node: UploadPlan):
+    def __init__(self, node: DeletePlan):
         super().__init__(node)
         config = ConfigurationManager()
         self.path_prefix = config.get_value('storage', 'path_prefix')
@@ -39,9 +42,24 @@ class UploadExecutor(AbstractExecutor):
         at the specified path with a predefined prefix
         """
 
-        video_blob = self.node.video_blob
-        path = self.node.file_path
-        video_bytes = base64.b64decode(video_blob[1:])
-        # print("save at ", path)
-        with open(os.path.join(self.path_prefix, path), 'wb') as f:
-            f.write(video_bytes)
+        # path = self.node.file_path
+        path = "test_video.mp4"
+        final_path = os.path.join(self.path_prefix, path)
+        if os.path.exists(final_path):
+            os.remove(final_path)
+
+        video_id = self.node.video_catalog_id
+        # data_tuple = []
+        # for col, val in zip(self.node.column_list, self.node.value_list):
+        #     val = val.evaluate()
+        #     val.frames.columns = [col.col_name]
+        #     data_tuple.append(val)
+
+        # batch = Batch.merge_column_wise(data_tuple)
+        metadata = CatalogManager().get_metadata(video_id)
+        # verify value types are consistent
+
+        # batch.frames = SchemaUtils.petastorm_type_cast(
+        #     metadata.schema.petastorm_schema, batch.frames)
+        # StorageEngine.write(metadata, batch)
+        

@@ -62,11 +62,12 @@ class EVACursor(object):
          the content into a string.
         """
         if 'UPLOAD' in query:
-            file_path = query.split()[2][1:-1]
-            dst_path = query.split()[-1][1:-2]
+            file_path = query.split()[2][1:-1] # "data/ua_detrac/ua_detrac.mp4"
+            dst_path = query.split()[-1][1:-2] # "test_video.mp4"
             with open(file_path, "rb") as f:
                 bytes_read = f.read()
                 b64_string = str(base64.b64encode(bytes_read))
+                # convert to standard UPLOAD query for execution 
                 query = 'UPLOAD PATH ' + \
                         '\'' + dst_path + '\'' + \
                         ' BLOB ' + \

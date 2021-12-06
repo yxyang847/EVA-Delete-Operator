@@ -29,4 +29,5 @@ class PlanOprType(IntEnum):
     ORDER_BY = auto()
     LIMIT = auto()
     SAMPLE = auto()
+    DELETE = auto()
     # add other types

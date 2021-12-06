@@ -19,7 +19,7 @@ from src.optimizer.operators import (LogicalGet, LogicalFilter, LogicalProject,
                                      LogicalCreateUDF, LogicalLoadData,
                                      LogicalUpload, LogicalQueryDerivedGet,
                                      LogicalUnion, LogicalOrderBy,
-                                     LogicalLimit, LogicalSample)
+                                     LogicalLimit, LogicalSample, LogicalDelete)
 from src.parser.statement import AbstractStatement
 from src.parser.select_statement import SelectStatement
 from src.parser.insert_statement import InsertTableStatement
@@ -27,6 +27,7 @@ from src.parser.create_statement import CreateTableStatement
 from src.parser.create_udf_statement import CreateUDFStatement
 from src.parser.load_statement import LoadDataStatement
 from src.parser.upload_statement import UploadStatement
+from src.parser.delete_statement import DeleteStatement
 from src.optimizer.optimizer_utils import (bind_table_ref, bind_columns_expr,
                                            bind_predicate_expr,
                                            create_column_metadata,
@@ -235,6 +236,30 @@ class StatementToPlanConvertor:
         upload_opr = LogicalUpload(statement.path, statement.video_blob)
         self._plan = upload_opr
 
+    def visit_delete(self, statement: DeleteStatement):
+        """Convertor for parsed delete statement
+        Arguments:
+            statement(DeleteStatement): [Delete statement]
+        """
+
+        table_ref = statement.from_table
+        if table_ref is None:
+            LoggingManager().log('From entry missing in select statement',
+                                 LoggingLevel.ERROR)
+            return None
+
+        catalog_table_id = bind_table_ref(table_ref.table)
+
+        # self.visit_table_ref(table_ref)
+
+        # Filter Operator
+        # predicate = statement.where_clause
+        # if predicate is not None:
+        #     self._visit_select_predicate(predicate)
+
+        delete_opr = LogicalDelete(table_ref, catalog_table_id)
+        self._plan = delete_opr
+
     def visit(self, statement: AbstractStatement):
         """Based on the instance of the statement the corresponding
            visit is called.
@@ -255,6 +280,8 @@ class StatementToPlanConvertor:
             self.visit_load_data(statement)
         elif isinstance(statement, UploadStatement):
             self.visit_upload(statement)
+        elif isinstance(statement, DeleteStatement):
+            self.visit_delete(statement)
         return self._plan
 
     @property
