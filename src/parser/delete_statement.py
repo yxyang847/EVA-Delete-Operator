@@ -40,7 +40,8 @@ class DeleteStatement(AbstractStatement):
 
     def __str__(self) -> str:
         print_str = "DELETE FROM {}".format(self._from_table)
-        print_str += " WHERE " + str(self._where_clause)
+        if self.where_clause is not None:
+            print_str += " WHERE " + str(self._where_clause)
         return print_str
 
     @property

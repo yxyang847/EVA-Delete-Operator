@@ -28,6 +28,6 @@ class Delete(evaql_parserVisitor):
     def visitSingleDeleteStatement(self, ctx: evaql_parser.SingleDeleteStatementContext):
         # from_table = self.visit(ctx.fileName()).value
         from_table = TableRef(self.visit(ctx.tableName()))
-        where_clause = self.visit(ctx.expression())
-        stmt = DeleteStatement(from_table, where_clause)
+        # where_clause = self.visit(ctx.expression())
+        stmt = DeleteStatement(from_table, None)
         return stmt
