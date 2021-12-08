@@ -1,22 +1,15 @@
-# EVA (Exploratory Video Analytics)
+# cs6422 Final Project: Delete Operator Development for EVA 
 
-<!-- [![Build Status](https://travis-ci.org/georgia-tech-db/eva.svg?branch=master)](https://travis-ci.com/georgia-tech-db/eva)
-[![Coverage Status](https://coveralls.io/repos/github/georgia-tech-db/eva/badge.svg?branch=master)](https://coveralls.io/github/georgia-tech-db/eva?branch=master)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Documentation Status](https://readthedocs.org/projects/exvian/badge/?version=latest)](https://evagatech.readthedocs.io/en/latest/index.html) [![Join the chat at https://gitter.im/georgia-tech-db/eva](https://badges.gitter.im/georgia-tech-db/eva.svg)](https://gitter.im/georgia-tech-db/eva?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
- -->
-## What is EVA?
+## Introduction of Delete Operator
+In this project, We implement the delete operator for EVA, so we can delete data from a certain table.
+## Syntax of Delete Statement
+```mysql
+DELETE FROM table_name [WHERE Clause]
+```
+## Future Work
+Currently, the initial delete operator only supportsbasic deletion by table name, i.e. delete all the recordsfrom the given table. We hope to extend this delete operator to its full func-tionality so it can support where clause
 
-EVA is a visual data management system (think MySQL for videos). It supports a declarative language similar to SQL and a wide range of commonly used  computer vision models.
-
-## What does EVA do?
-
-* EVA **enables querying of visual data** in user facing applications by providing a simple SQL-like interface for a wide range of commonly used computer vision models.
-
-* EVA **improves throughput** by introducing sampling, filtering, and caching techniques.
-
-* EVA **improves accuracy** by introducing state-of-the-art model specialization and selection algorithms.
-
+**The following contents is copied from EVA github, basically instructions on installation and tutorial on how to use EVA**. 
 ## Table of Contents
 * [Installation](#installation)
 * [Client Testing](#client-testing)
